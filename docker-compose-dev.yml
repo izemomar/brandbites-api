@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  brandbites-dev-api:
+    container_name: brandbites-dev-api
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.dev
+    restart: unless-stopped
+    working_dir: /usr/app
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '8000:8000'
+    volumes:
+      - brandbites-api-root:/usr/app
+      - node-modules:/usr/app/node_modules
+    networks:
+      - brandbites-api-network
+
+  brandbites-dev-database:
+    container_name: brandbites-dev-database
+    image: mysql:8.0.32
+    restart: unless-stopped
+    env_file:
+      - ./app/.env-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    volumes:
+      - brandbites-database:/var/lib/mysql
+    ports:
+      - '${DB_PORT}:3306'
+    networks:
+      - brandbites-api-network
+  
+  brandbites-dev-phpmyadmin:
+    container_name: brandbites-dev-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: brandbites-dev-database
+      PMA_PORT: ${DB_PORT}
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '4406:80'
+    networks:
+      - brandbites-api-network
+    depends_on:
+      - brandbites-dev-database
+
+volumes:
+  brandbites-api-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./app
+      o: bind
+
+  node-modules:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./app/node_modules
+      o: bind
+    external: false
+
+  brandbites-database:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./mysql/data
+      o: bind
+    external: false
+
+networks:
+  brandbites-api-network:
+    driver: bridge

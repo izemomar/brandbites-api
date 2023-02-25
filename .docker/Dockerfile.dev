@@ -1,0 +1,19 @@
+FROM node:19-alpine
+
+WORKDIR /usr/app
+
+USER root
+
+RUN apk update && apk upgrade
+
+COPY ./app/package*.json /usr/app
+
+RUN npm install
+
+COPY ./app .
+
+RUN if [ -f .env-dev ]; then cp .env-dev .env; fi
+
+EXPOSE 8000
+
+CMD ["npm", "run", "start:dev"]
