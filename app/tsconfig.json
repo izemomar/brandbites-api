@@ -10,7 +10,8 @@
       "@": ["src"],
       "@config/*": ["config/*"],
       "@shared/*": ["shared/*"],
-      "@utils/*": ["shared/utils/*"]
+      "@utils/*": ["shared/utils/*"],
+      "@sharedMiddlewares/*": ["shared/infrastructure/http/middlewares/*"]
     },
     "allowJs": true,
     "outDir": "dist",
