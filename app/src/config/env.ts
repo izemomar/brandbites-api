@@ -51,10 +51,22 @@ export function defaultEnv<K extends keyof TEnv>(key: K): TEnv[K] {
     DB_HOST: 'localhost',
     DB_PORT: 3306,
     SERVER_PORT: 3000,
-    ALLOWED_ORIGINS: '*'
+    ALLOWED_ORIGINS: '*',
+    NODE_ENV: 'development'
   };
 
-  return defaults![key];
+  return defaults[key];
+}
+
+/**
+ * Retrieves the value of a specific key from the environment variables or returns a default value if the key is not found.
+ *
+ * @param key - The key of the environment variable to retrieve.
+ * @returns {TEnv[K]} - The value of the specified environment variable, or the default value if the key is not found.
+ */
+export function getEnvOrDefault<K extends keyof TEnv>(key: K): TEnv[K] {
+  const value = env(key);
+  return value ? value : defaultEnv(key);
 }
 
 /**

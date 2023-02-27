@@ -1,4 +1,5 @@
 export type TEnv = {
+  NODE_ENV: string;
   DB_USERNAME: string;
   DB_DATABASE: string;
   DB_PASSWORD: string;

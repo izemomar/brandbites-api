@@ -1,5 +1,7 @@
-import app from '@shared/app-bootstrapper';
+import 'reflect-metadata';
 
-app.start(() => {
-  console.log(`[App] started on port ${app.appPort}`);
+import { startApp } from '@shared/app-starter';
+
+startApp(() => {
+  console.log('[App] started');
 });

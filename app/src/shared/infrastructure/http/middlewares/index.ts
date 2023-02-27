@@ -1,13 +1,14 @@
-import { corsMiddleware } from '@sharedMiddlewares/cors.middleware';
-import {
-  jsonMiddleware,
-  urlencodedMiddleware
-} from '@sharedMiddlewares/body-parser.middleware';
-import { helmetMiddleware } from '@sharedMiddlewares/helmet.middleware';
 import morgan from 'morgan';
 import compression from 'compression';
 
-export default [
+import { corsMiddleware } from '@shared-middlewares/cors.middleware';
+import {
+  jsonMiddleware,
+  urlencodedMiddleware
+} from '@shared-middlewares/body-parser.middleware';
+import { helmetMiddleware } from '@shared-middlewares/helmet.middleware';
+
+export const middlewares = [
   corsMiddleware,
   jsonMiddleware,
   urlencodedMiddleware,
