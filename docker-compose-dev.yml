@@ -20,11 +20,12 @@ services:
 
   brandbites-dev-database:
     container_name: brandbites-dev-database
-    image: mysql:8.0.32
+    image: mysql:latest
     restart: unless-stopped
     env_file:
       - ./app/.env-dev
     environment:
+      MYSQL_ROOT_USER: ${DB_USERNAME}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -41,7 +42,7 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: unless-stopped
     environment:
-      PMA_HOST: brandbites-dev-database
+      PMA_HOST: ${DB_HOST}
       PMA_PORT: ${DB_PORT}
       PMA_USER: ${DB_USERNAME}
       PMA_PASSWORD: ${DB_PASSWORD}
