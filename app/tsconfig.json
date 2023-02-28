@@ -7,7 +7,7 @@
     "typeRoots": ["node_modules/@types", "./src/shared/utils/types/*"],
     "baseUrl": "./src",
     "paths": {
-      "@": ["./*"],
+      "@": ["."],
       "@database/*": ["database/*"],
       "@config/*": ["config/*"],
       "@shared/*": ["shared/*"],

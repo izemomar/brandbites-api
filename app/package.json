@@ -26,6 +26,7 @@
     "@types/jest": "^29.4.0",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.14.0",
+    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
     "babel-jest": "^29.4.3",
@@ -52,6 +53,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.1.2",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.12",
+    "uuid": "^9.0.0"
   }
 }
