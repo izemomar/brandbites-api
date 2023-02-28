@@ -1,5 +1,7 @@
 import { ValueObject } from '@shared/domain/building-blocks/ValueObject';
 import { TDateTimeValueObjectProps } from '@shared/domain/types';
+import { DateTimeRule } from '../business-rules/DateTimeRule';
+import { BusinessRuleFailureException } from '../exceptions/BusinessRuleFailureException';
 
 /**
  * Represents a value object for date and time information.
@@ -14,7 +16,7 @@ export class DateTimeValueObject extends ValueObject<TDateTimeValueObjectProps> 
    *
    * @param {Date} dateObj - The `Date` object to create the `DateTimeValueObject` from.
    */
-  private constructor(dateObj: Date) {
+  constructor(dateObj: Date) {
     const date = dateObj.toISOString().substr(0, 10);
     const time = dateObj.toISOString().substr(11, 8);
 
@@ -71,35 +73,7 @@ export class DateTimeValueObject extends ValueObject<TDateTimeValueObjectProps> 
    * @throws An error if the date or time string is invalid.
    */
   public static create(date: string, time: string): DateTimeValueObject {
-    if (!this.prototype.validate(date, time)) {
-      throw new Error('Invalid date or time');
-    }
-
+    this.prototype.checkBusinessRule(new DateTimeRule(date, time));
     return new DateTimeValueObject(new Date(`${date}T${time}Z`));
-  }
-
-  /**
-   * Validates whether the provided date and time strings are in the correct format.
-   *
-   * @param {string} date - The date string to validate in the format 'YYYY-MM-DD'.
-   * @param {string} time - The time string to validate in the format 'HH:mm:ss'.
-   *
-   * @returns {boolean}
-   */
-  public validate(date: string, time: string): boolean {
-    if (!date || !time) {
-      return false;
-    }
-
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
-
-    if (!dateRegex.test(date) || !timeRegex.test(time)) {
-      return false;
-    }
-
-    const dateTime = new Date(`${date}T${time}Z`);
-
-    return !isNaN(dateTime.getTime());
   }
 }

@@ -1,4 +1,6 @@
 import { TValueObjectProps } from '@shared/domain/types';
+import { BusinessRuleFailureException } from '@shared/domain/exceptions/BusinessRuleFailureException';
+import { IBusinessRule } from '@shared/domain/interfaces/IBusinessRule';
 
 /**
  * ValueObject is a base class for all value objects.
@@ -23,13 +25,15 @@ export abstract class ValueObject<T extends TValueObjectProps> {
   }
 
   /**
-   * Validates the value object properties.
+   * Checks a business rule and throws an exception if the rule is broken.
    *
-   * @param props
+   * @param {IBusinessRule} rule - The business rule to check.
    *
-   * @typeparam K - The type of the value object properties.
-   *
-   * @returns {boolean}
+   * @throws BusinessRuleFailureException if the rule is broken.
    */
-  abstract validate<K extends keyof T>(...props: K[]): boolean;
+  protected checkBusinessRule(rule: IBusinessRule) {
+    if (rule.isBroken()) {
+      throw new BusinessRuleFailureException(rule);
+    }
+  }
 }
