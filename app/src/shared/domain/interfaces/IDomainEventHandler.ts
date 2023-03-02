@@ -13,17 +13,6 @@ export interface IDomainEventHandler<T extends IDomainEvent> {
   handle(domainEvent: T): Promise<void>;
 
   /**
-   * Returns true if the handler can handle the specified domain event.
-   *
-   * @param domainEvent The domain event to check.
-   *
-   * @returns True if the handler can handle the specified domain event.
-   *
-   * @memberof IDomainEventHandler
-   * */
-  canHandle(domainEvent: IDomainEvent): domainEvent is T;
-
-  /**
    * Subscribes the handler to the domain event publisher.
    *
    * @memberof IDomainEventHandler
