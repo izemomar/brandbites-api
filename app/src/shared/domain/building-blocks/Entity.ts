@@ -23,31 +23,6 @@ export abstract class Entity<T extends IEntityProps> {
   }
 
   /**
-   * Checks if two entities are equal by comparing their properties.
-   * @param entity - The entity to compare to.
-   * @returns A boolean value indicating whether the entities are equal.
-   */
-  public equals(entity?: Entity<T>): boolean {
-    if (!Entity.isEntity(entity) || entity === null || entity === undefined) {
-      return false;
-    }
-    if (entity.props === undefined) {
-      return false;
-    }
-
-    return JSON.stringify(this.props) === JSON.stringify(entity.props);
-  }
-
-  /**
-   * Checks if an object is an instance of Entity.
-   * @param obj - The object to check.
-   * @returns A boolean value indicating whether the object is an instance of Entity.
-   */
-  public static isEntity(obj: any): obj is Entity<any> {
-    return obj instanceof Entity;
-  }
-
-  /**
    * Gets the unique identifier of the entity.
    * @returns The unique identifier of the entity.
    */
@@ -82,5 +57,30 @@ export abstract class Entity<T extends IEntityProps> {
     if (rule.isBroken()) {
       throw new BusinessRuleFailureException(rule);
     }
+  }
+
+  /**
+   * Checks if two entities are equal by comparing their properties.
+   * @param entity - The entity to compare to.
+   * @returns A boolean value indicating whether the entities are equal.
+   */
+  public equals(entity?: Entity<T>): boolean {
+    if (!Entity.isEntity(entity) || entity === null || entity === undefined) {
+      return false;
+    }
+    if (entity.props === undefined) {
+      return false;
+    }
+
+    return JSON.stringify(this.props) === JSON.stringify(entity.props);
+  }
+
+  /**
+   * Checks if an object is an instance of Entity.
+   * @param obj - The object to check.
+   * @returns A boolean value indicating whether the object is an instance of Entity.
+   */
+  public static isEntity(obj: any): obj is Entity<any> {
+    return obj instanceof Entity;
   }
 }
