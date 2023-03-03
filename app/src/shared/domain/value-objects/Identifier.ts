@@ -62,9 +62,9 @@ export class Identifier<T extends string | number> {
    * @returns
    */
   protected isValidIdentifier(value: T): boolean {
-    const isValidNumericIdentifier = typeof value === 'number' && value > 0;
-    if (!isValidNumericIdentifier) {
-      return false;
+    const isValidNumericIdentifier = value > 0;
+    if (typeof value === 'number' && isValidNumericIdentifier) {
+      return true;
     }
 
     return isUuid(String(value));
