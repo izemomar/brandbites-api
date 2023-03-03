@@ -7,17 +7,13 @@ export interface IDomainEventPublisher {
   /**
    * Publishes a domain event.
    *
-   * @param {UniqueUUID} aggregateRootId The ID of the aggregate root that the domain event belongs to.
    * @param {IDomainEvent} domainEvent The domain event to publish.
    *
    * @returns {Promise<void>} A promise that resolves when the domain event has been published.
    *
    * @memberof IDomainEventPublisher
    */
-  publish(
-    aggregateRootId: UniqueUUID,
-    domainEvent: IDomainEvent
-  ): Promise<void>;
+  publish(domainEvent: IDomainEvent): Promise<void>;
 
   /**
    * Registers a domain event handler.
@@ -77,15 +73,4 @@ export interface IDomainEventPublisher {
    * @memberof IDomainEventPublisher
    */
   clearAggregateRootEvents(aggregateRootId: UniqueUUID): void;
-
-  /**
-   * Finds an aggregate root by its ID.
-   *
-   * @param {UniqueUUID} aggregateRootId The ID of the aggregate root to find.
-   *
-   * @returns {number | undefined} The index of the aggregate root in the aggregate roots array, or undefined if the aggregate root was not found.
-   *
-   * @memberof IDomainEventPublisher
-   */
-  findAggregateRootIndex<T>(aggregateRootId: UniqueUUID): number | undefined;
 }

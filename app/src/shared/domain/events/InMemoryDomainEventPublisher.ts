@@ -2,31 +2,21 @@ import { UniqueUUID } from '@shared/domain/value-objects/UniqueUUID';
 import { IDomainEvent } from '@shared/domain/building-blocks/IDomainEvent';
 import { IDomainEventHandler } from '@shared/domain/interfaces/IDomainEventHandler';
 import { IDomainEventPublisher } from '@shared/domain/interfaces/IDomainEventPublisher';
-import { AggregateRoot } from '@shared/domain/building-blocks/AggregateRoot';
-import { IEntityProps } from '@shared/domain/interfaces/IEntityProps';
-
-/**
- * @example
- * const aggregateRoot: TAggregateRootWithEvents = {
- *  id: new UniqueUUID(),
- *  pendingEvents: [],
- * };
- */
-type TAggregateRootWithEventsList = {
-  id: UniqueUUID;
-  readonly pendingEvents: IDomainEvent[];
-};
 
 export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
   private static instance: InMemoryDomainEventPublisher;
-  private readonly pendingEvents: TAggregateRootWithEventsList[] = [];
+  private readonly pendingEvents: IDomainEvent[] = [];
 
-  private readonly handlers = new Map<
+  private readonly _handlers = new Map<
     string,
     IDomainEventHandler<IDomainEvent>[]
   >(); // <IDomainEvent.name, handlers[]>
 
   private constructor() {}
+
+  public get handlers(): Map<string, IDomainEventHandler<IDomainEvent>[]> {
+    return this._handlers;
+  }
 
   public static getInstance(): InMemoryDomainEventPublisher {
     if (!InMemoryDomainEventPublisher.instance) {
@@ -36,19 +26,15 @@ export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
     return InMemoryDomainEventPublisher.instance;
   }
 
-  publish(
-    aggregateRootId: UniqueUUID,
-    domainEvent: IDomainEvent
-  ): Promise<void> {
-    const aggregateRootIndex = this.findAggregateRootIndex(aggregateRootId);
-    if (aggregateRootIndex === -1) {
-      this.pendingEvents.push({
-        id: aggregateRootId,
-        pendingEvents: [domainEvent]
-      });
-    } else {
-      this.pendingEvents[aggregateRootIndex].pendingEvents.push(domainEvent);
+  publish(domainEvent: IDomainEvent): Promise<void> {
+    const exists = this.pendingEvents.some((_event: IDomainEvent) =>
+      _event.equals(domainEvent)
+    );
+
+    if (!exists) {
+      this.pendingEvents.push(domainEvent);
     }
+
     return Promise.resolve();
   }
 
@@ -56,36 +42,34 @@ export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
     domainEventHandler: IDomainEventHandler<T>,
     domainEventName: string
   ): void {
-    if (!this.handlers.has(domainEventName)) {
-      this.handlers.set(domainEventName, []);
+    if (!this._handlers.has(domainEventName)) {
+      this._handlers.set(domainEventName, []);
     }
-    this.handlers.get(domainEventName).push(domainEventHandler);
+    this._handlers.get(domainEventName).push(domainEventHandler);
   }
 
   getAggregateRootEvents(aggregateRootId: UniqueUUID): IDomainEvent[] {
-    const aggregateRootIndex = this.findAggregateRootIndex(aggregateRootId);
-    if (aggregateRootIndex === -1) {
-      return [];
-    }
-    return this.pendingEvents[aggregateRootIndex].pendingEvents;
+    return (
+      this.pendingEvents?.filter((domainEvent: IDomainEvent) =>
+        domainEvent.aggregateRootId.equals(aggregateRootId)
+      ) ?? []
+    );
   }
 
   async dispatchAggregateRootEvents(
     aggregateRootId: UniqueUUID
   ): Promise<void> {
-    const aggregateRootIndex = this.findAggregateRootIndex(aggregateRootId);
-    if (aggregateRootIndex === -1) {
+    const aggregateRootEvents = this.getAggregateRootEvents(aggregateRootId);
+    if (aggregateRootEvents.length === 0) {
       return Promise.resolve();
     }
 
-    const aggregateRoot = this.pendingEvents[aggregateRootIndex];
-
-    const promises = aggregateRoot.pendingEvents.map(domainEvent => {
-      const handlers = this.handlers.get(domainEvent.eventName);
-      if (!handlers) {
+    const promises = aggregateRootEvents.map(domainEvent => {
+      const _handlers = this._handlers.get(domainEvent.name);
+      if (!_handlers) {
         return Promise.resolve();
       }
-      return Promise.all(handlers.map(handler => handler.handle(domainEvent)));
+      return Promise.all(_handlers.map(handler => handler.handle(domainEvent)));
     });
 
     await Promise.all(promises);
@@ -97,22 +81,22 @@ export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
     aggregateRootId: UniqueUUID,
     eventName: string
   ): Promise<void> {
-    const aggregateRootIndex = this.findAggregateRootIndex(aggregateRootId);
-    if (aggregateRootIndex === -1) {
+    const aggregateRootEvents = this.getAggregateRootEvents(aggregateRootId);
+
+    if (aggregateRootEvents.length === 0) {
       return Promise.resolve();
     }
 
-    const aggregateRoot = this.pendingEvents[aggregateRootIndex];
+    const promises = aggregateRootEvents
+      .filter(domainEvent => domainEvent.name === eventName)
 
-    const promises = aggregateRoot.pendingEvents
-      .filter(domainEvent => domainEvent.eventName === eventName)
       .map(domainEvent => {
-        const handlers = this.handlers.get(domainEvent.eventName);
-        if (!handlers) {
+        const _handlers = this._handlers.get(domainEvent.name);
+        if (!_handlers) {
           return Promise.resolve();
         }
         return Promise.all(
-          handlers.map(handler => handler.handle(domainEvent))
+          _handlers.map(handler => handler.handle(domainEvent))
         );
       });
 
@@ -121,16 +105,11 @@ export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
   }
 
   clearAggregateRootEvents(aggregateRootId: UniqueUUID): void {
-    const aggregateRootIndex = this.findAggregateRootIndex(aggregateRootId);
-    if (aggregateRootIndex !== -1) {
-      this.pendingEvents.splice(aggregateRootIndex, 1);
-    }
-  }
-
-  findAggregateRootIndex<T>(aggregateRootId: UniqueUUID): number {
-    const aggregateRootIndex = this.pendingEvents.findIndex(aggregateRoot =>
-      aggregateRoot.id.equals(aggregateRootId)
+    const events = this.pendingEvents.filter(
+      (domainEvent: IDomainEvent) =>
+        !domainEvent.aggregateRootId.equals(aggregateRootId)
     );
-    return aggregateRootIndex;
+    this.pendingEvents.splice(0, this.pendingEvents.length);
+    this.pendingEvents.push(...events);
   }
 }

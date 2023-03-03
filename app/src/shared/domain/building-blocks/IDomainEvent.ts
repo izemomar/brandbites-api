@@ -3,13 +3,22 @@ import { UniqueUUID } from '@shared/domain/value-objects/UniqueUUID';
 
 export interface IDomainEvent {
   /**
+   * The id of the event.
+   *
+   * @type {UniqueUUID}
+   *
+   * @memberof IDomainEvent
+   * */
+  readonly _id: UniqueUUID;
+
+  /**
    * The name of the event.
    *
    * @type {string}
    *
    * @memberof IDomainEvent
    * */
-  readonly eventName: string;
+  readonly _eventName: string;
 
   /**
    * The date and time the event was created.
@@ -17,15 +26,52 @@ export interface IDomainEvent {
    * @type {DateTimeValueObject}
    * @memberof IDomainEvent
    */
-  occurredAt: DateTimeValueObject;
+  readonly _occurredAt: DateTimeValueObject;
 
   /**
-   * The unique identifier of the aggregate root that the event is associated with.
+   * The id of the event.
    *
    * @type {UniqueUUID}
    *
    * @memberof IDomainEvent
    * */
+  get id(): UniqueUUID;
 
-  aggregateRootId: UniqueUUID;
+  /**
+   * The name of the event.
+   *
+   * @type {string}
+   *
+   * @memberof IDomainEvent
+   * */
+  get name(): string;
+
+  /**
+   * The id of the aggregate root that generated the event.
+   *
+   * @type {UniqueUUID}
+   *
+   * @memberof IDomainEvent
+   * */
+  get aggregateRootId(): UniqueUUID;
+
+  /**
+   * The date and time the event was created.
+   *
+   * @type {DateTimeValueObject}
+   *
+   * @memberof IDomainEvent
+   * */
+  get occurredAt(): DateTimeValueObject;
+
+  /**
+   * Determines whether the specified domain event is equal to this domain event.
+   *
+   * @param {IDomainEvent} other The domain event to compare with this domain event.
+   *
+   * @returns {boolean} True if the specified domain event is equal to this domain event; otherwise, false.
+   *
+   * @memberof IDomainEvent
+   * */
+  equals(other: IDomainEvent): boolean;
 }

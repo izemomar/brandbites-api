@@ -39,7 +39,7 @@ export abstract class AggregateRoot<T extends IEntityProps>
    * @memberof AggregateRoot
    */
   raiseDomainEvent(domainEvent: IDomainEvent): void {
-    this.eventsPublisher.publish(this.id, domainEvent);
+    this.eventsPublisher.publish(domainEvent);
   }
 
   /**
