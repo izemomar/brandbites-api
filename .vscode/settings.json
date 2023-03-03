@@ -1,9 +1,9 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "javascript.validate.enable": false,
-  "typescript.validate.enable": true,
+  /* "typescript.tsdk": "node_modules/typescript/lib", */
+  /* "javascript.validate.enable": false,
+  "typescript.validate.enable": true, */
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "javascript.suggest.autoImports": false,
+  /* "javascript.suggest.autoImports": false, */
   "typescript.suggest.autoImports": true,
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "javascript.preferences.importModuleSpecifier": "non-relative"
