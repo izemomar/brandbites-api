@@ -8,7 +8,7 @@ export class UniqueUUID extends Identifier<string> {
     super(id);
   }
 
-  public generate(): UniqueUUID {
+  public static generate(): UniqueUUID {
     return new UniqueUUID(uuid());
   }
 
