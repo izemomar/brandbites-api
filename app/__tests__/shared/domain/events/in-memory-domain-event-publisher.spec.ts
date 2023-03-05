@@ -39,11 +39,13 @@ describe('InMemoryDomainEventPublisher', () => {
   let publisher: InMemoryDomainEventPublisher;
   let aggregateRootId: UniqueUUID;
 
-  const mockEvent: IDomainEvent = mockDomainEvent(aggregateRootId);
+  let mockEvent: IDomainEvent;
 
   beforeEach(() => {
     publisher = InMemoryDomainEventPublisher.getInstance();
     aggregateRootId = UniqueUUID.generate();
+
+    mockEvent = mockDomainEvent(aggregateRootId);
   });
 
   afterEach(() => {
