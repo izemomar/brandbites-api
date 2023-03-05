@@ -7,6 +7,7 @@ export default async (): Promise<Config.InitialOptions> => {
       name: 'brandbite-api',
       color: 'greenBright'
     },
+    rootDir: '.', // root of the project
     verbose: true,
     setupFiles: ['dotenv/config'],
     testMatch: ['<rootDir>/__tests__/**/**/*.spec.ts'],
