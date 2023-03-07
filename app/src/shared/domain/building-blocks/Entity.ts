@@ -3,6 +3,7 @@ import { UniqueUUID } from '@shared/domain/value-objects/UniqueUUID';
 import { DateTimeValueObject } from '@shared/domain/value-objects/DateTimeValueObject';
 import { IBusinessRule } from '@shared/domain/interfaces/IBusinessRule';
 import { BusinessRuleFailureException } from '@shared/domain/exceptions/BusinessRuleFailureException';
+import { Either } from '@shared/utils/helpers/result';
 
 /**
  * Base entity class that provides common properties and methods for all entities.
@@ -58,6 +59,17 @@ export abstract class Entity<T extends IEntityProps> {
       throw new BusinessRuleFailureException(rule);
     }
   }
+
+  /**
+   * Validates the entity.
+   *
+   * @returns {Either<false, true>} - A Failure object if the entity is invalid, or a Success object if the entity is valid.
+   *
+   * @remarks
+   * This method should be overridden by child classes to provide custom validation logic.
+   * Usable when we want to validate an entity without throwing an exception ( silent validation ).
+   * */
+  public abstract validate(): Either<void, void>;
 
   /**
    * Checks if two entities are equal by comparing their properties.
