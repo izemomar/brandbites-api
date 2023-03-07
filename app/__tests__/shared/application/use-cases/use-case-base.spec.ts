@@ -42,8 +42,12 @@ describe('UseCaseBase', () => {
   });
 
   it('should resolve the promise to a Success instance when handle() method returns a Success instance', async () => {
-    class UseCaseBaseImplWithSuccess extends UseCaseBaseImpl {
-      protected handle(request: Request): Promise<TUseCaseResponseBase> {
+    type TResponse = Either<
+      Error | UseCaseFailedResult,
+      Result<{ id: string }>
+    >;
+    class UseCaseBaseImplWithSuccess extends UseCaseBase<Request, TResponse> {
+      protected handle(request: Request): Promise<TResponse> {
         const result = new Result({
           success: true,
           value: { id: '123' }
@@ -61,7 +65,7 @@ describe('UseCaseBase', () => {
     expect(result.isSuccess()).toBeTruthy();
     expect(result.isFailure()).toBeFalsy();
     expect(result.value).toBeInstanceOf(Result);
-    expect(result.value.value).toEqual({ id: '123' });
+    if (result.isSuccess()) expect(result.value.value).toEqual({ id: '123' });
   });
 
   it('should reject the promise with a Failure instance when an error is thrown from the handle() method', async () => {

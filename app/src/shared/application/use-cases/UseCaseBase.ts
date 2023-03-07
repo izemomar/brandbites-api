@@ -1,13 +1,11 @@
 import { IUseCase } from '@shared/application/use-cases/IUseCase';
+import { UseCaseException } from '@shared/application/use-cases/UseCaseException';
 import { UseCaseFailedResult } from '@shared/application/use-cases/UseCaseFailedResult';
 import { Either, fail, Result } from '@shared/utils/helpers/result';
 
 // Define a type for the base response of a use case, which is either an instance of UseCaseFailedResult
 // or a Result with a void value
-export type TUseCaseResponseBase<F = unknown, S = unknown | void> = Either<
-  UseCaseFailedResult | Result<F>,
-  Result<S>
->;
+export type TUseCaseResponseBase = Either<Error | UseCaseFailedResult, unknown>;
 
 /**
  * A base class for implementing use cases. A use case is an application-specific business logic that
@@ -27,14 +25,14 @@ export abstract class UseCaseBase<
    *
    * @returns A promise that resolves to the response object of the use case.
    */
-  execute(request: IRequest): Promise<IResponse> {
+  async execute(request: IRequest): Promise<IResponse> {
     try {
       // Delegate the request handling to the handle() method implemented by a derived class
       return this.handle(request);
     } catch (error) {
       // If an exception is thrown during request handling, return a failed result with the error information
-      const failedResult = new UseCaseFailedResult(error);
-      return Promise.resolve(fail(failedResult) as IResponse);
+
+      return Promise.resolve(fail(new UseCaseFailedResult(error)) as IResponse);
     }
   }
 
