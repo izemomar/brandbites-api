@@ -11,7 +11,7 @@
     "lint": "eslint . --ext src/**/*.ts",
     "typeorm:sync": "node -r tsconfig-paths/register -r ts-node/register node_modules/typeorm/cli.js schema:sync -d src/database/data-source.ts",
     "test": "jest --runInBand --coverage --config=jest.config.ts",
-    "test:watch": "jest --runInBand --watchAll --config=jest.config.ts"
+    "test:watch": "nodemon --legacy-watch --config nodemon.tests.json"
   },
   "keywords": [],
   "author": "",

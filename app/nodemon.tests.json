@@ -1,0 +1,5 @@
+{
+  "watch": ["./__tests__"],
+  "ext": "ts",
+  "exec": "jest --runInBand --config=jest.config.ts --watchAll"
+}
