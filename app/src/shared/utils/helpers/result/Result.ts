@@ -116,7 +116,7 @@ export class Result<T> {
    *
    * @returns {Result<U>} The new Result object.
    */
-  public static fail<U>(error: string): Result<U> {
+  public static fail<U>(error: U | string): Result<U> {
     return new Result<U>({ success: false, error });
   }
 

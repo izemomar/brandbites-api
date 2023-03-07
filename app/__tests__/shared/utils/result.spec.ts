@@ -1,4 +1,4 @@
-import { Result } from '@shared/utils/Result';
+import { Result } from '@shared/utils/helpers/result';
 
 describe('result class', () => {
   it('should be instantiable', () => {
