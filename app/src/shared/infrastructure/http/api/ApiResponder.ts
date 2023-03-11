@@ -1,10 +1,5 @@
+import { TValidationError } from '@shared/infrastructure/http/requests/types';
 import { Response } from 'express';
-
-type TValidationError = {
-  message: string;
-  field: string;
-  value: string;
-};
 
 export class ApiResponder {
   public static ok<T>(response: Response, data?: T): Response<T> {
