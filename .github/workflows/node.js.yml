@@ -1,4 +1,4 @@
-name: brand-bites api tests
+name: brand-bites api CI
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
     container: node:19-alpine
     steps:
