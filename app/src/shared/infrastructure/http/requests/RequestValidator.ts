@@ -75,7 +75,6 @@ export abstract class RequestValidator {
     tempClass ??= this.createTempClassToBeValidated(rules, requestData);
     const validatedProperties = Object.keys(tempClass) as (keyof DTO)[];
     const validatedBodyOrQuery: { [key: string]: any } = {};
-    console.log('validatedProperties: ', validatedProperties);
     for (const property of validatedProperties) {
       const propertyName = property.toString().replace('_', '');
       validatedBodyOrQuery[propertyName] =
