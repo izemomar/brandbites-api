@@ -1,4 +1,6 @@
+import { AuthorizationException } from '@shared/infrastructure/http/requests/AuthorizationException';
 import { TValidationError } from '@shared/infrastructure/http/requests/types';
+import { ValidationException } from '@shared/infrastructure/http/requests/ValidationException';
 import { Response } from 'express';
 
 export class ApiResponder {
@@ -45,5 +47,15 @@ export class ApiResponder {
     message: string = 'Internal Server Error'
   ): Response {
     return response.status(500).json({ message });
+  }
+
+  public static sendError(response: Response, error: Error): void {
+    if (error instanceof ValidationException) {
+      ApiResponder.unprocessableEntity(response, error.errors, error.message);
+    } else if (error instanceof AuthorizationException) {
+      ApiResponder.unauthorized(response, error.message);
+    } else {
+      ApiResponder.internalServerError(response);
+    }
   }
 }

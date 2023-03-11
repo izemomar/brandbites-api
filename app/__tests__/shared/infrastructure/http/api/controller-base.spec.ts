@@ -1,16 +1,28 @@
 import { ApiResponder } from '@shared/infrastructure/http/api/ApiResponder';
 import { Request, Response } from 'express';
 import { ControllerBase } from '@shared/infrastructure/http/api/ControllerBase';
+import { RequestBase } from '@shared/infrastructure/http/requests/RequestBase';
+import { TRule } from '@shared/infrastructure/http/requests/types';
+import { RouterWrapper } from '@shared/infrastructure/http/api/RouterWrapper';
 
-class TestController extends ControllerBase {
-  public async handle(request: Request, response: Response): Promise<void> {
+type mockDto = {
+  name: string;
+};
+
+class TestController extends ControllerBase<mockDto> {
+  public handle(
+    request: RequestBase<mockDto>,
+    response: Response<any, Record<string, any>>
+  ): Promise<void> {
     response.status(200).send('Hello World!');
+    return Promise.resolve();
   }
 }
 
 describe('ControllerBase', () => {
-  describe('execute', () => {
+  describe('Basic Functionalities', () => {
     let res: Response;
+    let req: RequestBase<mockDto>;
 
     beforeEach(() => {
       res = {
@@ -18,12 +30,25 @@ describe('ControllerBase', () => {
         send: jest.fn(),
         json: jest.fn()
       } as unknown as Response;
+
+      req = new (class extends RequestBase<mockDto> {
+        queryRules(): TRule {
+          return {};
+        }
+        rules(): TRule {
+          return {};
+        }
+      })({
+        body: {},
+        query: {}
+      } as unknown as Request);
+
+      req.validate();
     });
 
     it('should call handle method when useWorker is false', async () => {
       // Arrange
       const controller = new TestController();
-      const req = {} as Request;
 
       jest.spyOn(controller as any, 'handle');
 
@@ -41,7 +66,6 @@ describe('ControllerBase', () => {
       const controller = new (class extends TestController {
         protected useWorker = true;
       })();
-      const req = {} as Request;
 
       jest.spyOn(controller as any, 'executeInWorker');
 
@@ -55,7 +79,6 @@ describe('ControllerBase', () => {
     it('should catch and handle errors', async () => {
       // Arrange
       const controller = new TestController();
-      const req = {} as Request;
 
       jest.spyOn(controller, 'handle').mockImplementation(() => {
         throw new Error();
