@@ -11,6 +11,12 @@ import {
 type TRouteMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
 type TController = new () => ControllerBase;
 
+/**
+ * A wrapper for the express router.
+ * It provides a simple way to register routes.
+ * It also provides a way to add validation middleware to the routes.
+ * It also provides a way to add authorization middleware to the routes.
+ */
 export class RouterWrapper {
   private _router: Router;
 
