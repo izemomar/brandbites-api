@@ -19,11 +19,17 @@ jobs:
         node-version: [16.x, 18.x, 19.x]
 
     steps:
+    - name: change working directory
+      working-directory: ./app
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install
-    - run: npm run test
+    - name: install dependencies
+      working-directory: ./app
+      run: npm install
+    - name: run tests
+      working-directory: ./app
+      run: npm run test
