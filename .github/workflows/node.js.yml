@@ -1,33 +1,24 @@
-name: brand-bites api CI
+name: brand-bites api tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
+
 
 jobs:
-  build:
-
+  # add a job to run the tests for nodejs 19-alpine
+  # make cd the app directory before running the tests and installing dependencies
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x, 19.x]
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Install dependencies
-      working-directory: app
-      run: npm install
-    - name: Run tests
-      working-directory: app
-      run: npm run test
-      env:
-        CI: true
+      - uses: actions/checkout@v2
+      - name: Use Node.js 19-alpine
+        uses: actions/setup-node@v1
+        with:
+          node-version: 19-alpine
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
