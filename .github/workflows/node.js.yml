@@ -10,6 +10,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    # Change working directory to "app"
+    runs:
+      working-directory: app
 
     strategy:
       matrix:
@@ -17,9 +20,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    # Remove the "run" command that changes the directory
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: npm install
     - run: npm run test
